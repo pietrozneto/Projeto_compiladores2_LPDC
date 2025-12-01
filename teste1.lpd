@@ -1,0 +1,11 @@
+prg MEU_TESTE;
+
+var
+    int x, y;
+    int soma;
+begin
+    x <- 5;
+    y <- 10;
+    soma <- x + y;
+    write(soma);
+end.
