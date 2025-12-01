@@ -1,6 +1,8 @@
 #include <stdio.h>
+#include <string.h>
 #include "analex.h"
 #include "asdr.h"
+#include "tabsimb.h"
 
 int main(int argc, char *argv[]) {
     FILE *resultado;
@@ -26,6 +28,15 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    char nome_base[256];
+    strcpy(nome_base, argv[1]);
+    
+    // Remove extensão .lpd se existir
+    char *ponto = strrchr(nome_base, '.');
+    if (ponto != NULL) {
+        *ponto = '\0';
+    }
+
     // Bootstrap: carrega o primeiro token
     lookahead = obter_atomo(); 
     
@@ -33,8 +44,10 @@ int main(int argc, char *argv[]) {
     parse_ini();
 
     // Se o último token é EOF, sucesso!
-    if (lookahead.tipo == sEOF)
+    if (lookahead.tipo == sEOF) {
         printf("Código compilado com sucesso!\n");
+        ts_imprimir_arquivo(nome_base);
+    }
     
     fclose(fonte);
     return 0;
