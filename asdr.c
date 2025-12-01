@@ -25,7 +25,7 @@ static void set_expected_msg(const char *msg){
     }
 }
 
-// pilha de expectativas (útil para parênteses aninhados e similares)
+// pilha de expectativas
 static char expected_stack[32][32];
 static int expected_stack_top = 0;
 
@@ -152,11 +152,11 @@ static const char* token_enum_name(TipoAtomo t){
 void verifica(TipoAtomo atomo){
     expected_atomo = atomo;
     if(atomo == lookahead.tipo){
-        /* consumiu token esperado: limpa o esperado e pega o próximo */
+        // consumiu token esperado: limpa o esperado e pega o próximo
         last_linha_token = lookahead.linha;  // rastreia a linha do último token consumido
         expected_atomo = -1;
         expected_msg[0] = '\0';
-        /* atualizar contador de parênteses quando consumimos eles */
+        // atualizar contador de parênteses quando consumimos eles
         if (atomo == sABRE_PARENT) {
             open_paren_count++;
         }
@@ -203,7 +203,7 @@ void parse_ini() {
 }
 
 void parse_id(){
-    /* esperamos um identificador aqui */
+    // esperamos um identificador aqui
     expected_atomo = sIDENT;
     expected_msg[0] = '\0';
     if (lookahead.tipo != sIDENT) {
@@ -302,7 +302,7 @@ void parse_erro(){
                 snprintf(found_repr, sizeof(found_repr), "%s (%s)", token_to_string(lookahead.tipo), token_enum_name(lookahead.tipo));
             }
         }
-        /* Priorizar mensagem de parêntese aberto não fechado */
+        // Priorizar mensagem de parêntese aberto não fechado
         fprintf(stderr, "Erro (%d): Esperado token ')' encontrado '%s'\n", erro_linha, found_repr);
     } else if(expected_stack_top > 0){
         const char *stk = expected_stack[expected_stack_top - 1];
@@ -337,7 +337,7 @@ void parse_erro(){
         const char *exp = (expected_atomo >= 0) ? token_to_string((TipoAtomo)expected_atomo) : "<desconhecido>";
             fprintf(stderr, "Erro (%d): Esperado token '%s' encontrado '%s'\n", erro_linha, exp, found_repr);
     }
-    /* Não saímos aqui — voltamos para o chamador para continuar o parsing */
+    // Não saímos aqui — voltamos para o chamador para continuar o parsing
 }
 
 int parse_get_error_count(){
@@ -474,13 +474,13 @@ void parse_rpt(){
     pop_expected();
 }
 void parse_atr(){
-    /* No lado esquerdo de uma atribuição, o identificador pode ser implicitamente declarado */
+    // No lado esquerdo de uma atribuição, o identificador pode ser implicitamente declarado
     expected_atomo = sIDENT;
     expected_msg[0] = '\0';
     if (lookahead.tipo != sIDENT) {
         parse_erro();
     } else {
-        /* Se o identificador não está declarado, inseri-lo como variável local (tipo INT por padrão) */
+        // Se o identificador não está declarado, inseri-lo como variável local (tipo INT por padrão)
         if (ts_buscar(lookahead.lexema.string) == NULL) {
             ts_inserir(lookahead.lexema.string, CAT_VARIAVEL, TIPO_INT);
         }
