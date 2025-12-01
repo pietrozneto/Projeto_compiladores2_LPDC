@@ -43,11 +43,17 @@ int main(int argc, char *argv[]) {
     // Inicia a análise sintática
     parse_ini();
 
-    // Se o último token é EOF, sucesso!
-    if (lookahead.tipo == sEOF) {
-        printf("Código compilado com sucesso!\n");
-        ts_imprimir_arquivo(nome_base);
+    // Verifica se houve erros de compilação
+    int err_count = parse_get_error_count();
+    if (err_count > 0) {
+        fprintf(stderr, "Compilação falhou com %d erro(s).\n", err_count);
+        fclose(fonte);
+        return 1;
     }
+
+    // Sucesso! Gerar arquivo de saída
+    printf("Código compilado com sucesso!\n");
+    ts_imprimir_arquivo(nome_base);
     
     fclose(fonte);
     return 0;
