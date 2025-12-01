@@ -1,0 +1,10 @@
+prg ERRO;
+
+var
+    int x;
+    int x;          // erro: redeclaração de variavel
+begin
+    x <- 5;
+    y <- x - 1      // erro: variavel y não declarado
+    write(z);       // erro: variavel z não declarado
+end.
