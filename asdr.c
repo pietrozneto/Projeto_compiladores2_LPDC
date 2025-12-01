@@ -1,7 +1,10 @@
-#include <stdio.h>
 #include "analex.h"
 #include "asdr.h"
+#include "tabsimb.h"
+
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 TInfoAtomo lookahead;
 void verifica(TipoAtomo atomo){
@@ -14,16 +17,24 @@ void verifica(TipoAtomo atomo){
 }
 
 void parse_erro(){
-    perror("Erro na compilacao");
-    printf("tipo %d",lookahead.tipo);
+    fprintf(stderr, "Erro sintático encontrado\n");
+    fprintf(stderr, "Tipo do token: %d\n", lookahead.tipo);
+    fprintf(stderr, "Linha: %d\n", lookahead.linha);
     exit(EXIT_FAILURE);
 }
 void parse_ini() {
     verifica(sPRG);
-    parse_id();
+
+    TInfoAtomo info_prog = lookahead;
+    verifica(sIDENT);
+
+    ts_iniciar();
+    ts_inserir(info_prog.lexema.string, CAT_PROGRAMA, TIPO_VOID);
+
     verifica(sPONTO_VIRG);
+
     if (lookahead.tipo == sVAR){
-        parse_dcl();
+        parse_dcl(); //processa declarações de variáveis
     }
 
     parse_bco();
@@ -31,25 +42,42 @@ void parse_ini() {
 }
 
 void parse_id(){
+    if (lookahead.tipo != sIDENT) {
+        parse_erro();
+    }
+    if (strlen(lookahead.lexema.string) > 0 && ts_buscar(lookahead.lexema.string) == NULL) {
+        char erro[300];
+        snprintf(erro, sizeof(erro), "Identificador '%s' não declarado", lookahead.lexema.string);
+        ts_erro(erro);
+    }
     verifica(sIDENT);
 }
 
-void parse_dcl(){
+int parse_dcl(){
     int qte = 0;
     verifica(sVAR);
-    do{
-        parse_tpo();
-        parse_id();
+
+    while (lookahead.tipo == sINT || lookahead.tipo == sFLOAT) {
+        TipoSimbolo tipo = (lookahead.tipo == sINT) ? TIPO_INT : TIPO_FLOAT;
+        verifica(lookahead.tipo); // consome int ou float
+
+        TInfoAtomo info_var = lookahead;
+        verifica(sIDENT);
+        ts_inserir(info_var.lexema.string, CAT_VARIAVEL, tipo);
         qte++;
-        while(lookahead.tipo == sVIRG){
+
+        while (lookahead.tipo == sVIRG) {
             verifica(sVIRG);
-            parse_id();
+            info_var = lookahead;
+            verifica(sIDENT);
+            ts_inserir(info_var.lexema.string, CAT_VARIAVEL, tipo);
             qte++;
         }
         verifica(sPONTO_VIRG);
-    }while(lookahead.tipo == sINT);
-
+    }
+    return qte;
 }
+
 void parse_bco(){
     verifica(sBEGIN);
     while(lookahead.tipo != sEND){
@@ -167,9 +195,10 @@ void parse_ret(){
 void parse_e(){
     if(lookahead.tipo == sNUM_INT){
         verifica(sNUM_INT);
+    }else if(lookahead.tipo == sNUM_REAL){
+        verifica(sNUM_REAL);
     }else{
         parse_id();
-
     }
 }
 void parse_exp(){
