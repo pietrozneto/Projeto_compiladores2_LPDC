@@ -13,6 +13,7 @@
  ///////////////////////*/
 void parse_erro();
 void parse_ini();
+int parse_get_error_count();
 void parse_id();
 void parse_dcl();
 void parse_bco();
