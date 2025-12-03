@@ -2,6 +2,8 @@
 #ifndef ASDR_H
 #define ASDR_H
 
+#include "analex.h"
+
 /*///////////////////////
     VARIÁVEIS GLOBAIS
       COMPARTILHADAS
@@ -13,8 +15,9 @@
  ///////////////////////*/
 void parse_erro();
 void parse_ini();
+int parse_get_error_count();
 void parse_id();
-void parse_dcl();
+int parse_dcl();
 void parse_bco();
 void parse_tpo();
 void parse_cmd();
@@ -31,11 +34,9 @@ void parse_exp();
 void parse_exps();
 void parse_tmo();
 void parse_ftr();
-void parse_op_cat3();
-void parse_op_cat2();
-void parse_op_cat1();
-
-
-// ... demais protótipos
+void verifica(TipoAtomo atomo);
+TipoAtomo parse_op_cat3();
+TipoAtomo parse_op_cat2();
+TipoAtomo parse_op_cat1();
 
 #endif
