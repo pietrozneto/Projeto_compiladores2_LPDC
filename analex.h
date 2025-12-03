@@ -1,6 +1,7 @@
 
 #ifndef ANALEX_H
 #define ANALEX_H
+#include <stdio.h>
 
 /*///////////////////////
         DEFINIÇÕES
