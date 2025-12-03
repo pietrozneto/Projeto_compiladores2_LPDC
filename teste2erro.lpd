@@ -5,6 +5,6 @@ var
     int x;          // erro: redeclaração de variavel
 begin
     x <- 5;
-    y <- x - 1      // erro: variavel y não declarado
+    y <- x - 1      // erro: variavel y não declarado e ausencia de ';'
     write(z);       // erro: variavel z não declarado
 end.
