@@ -33,7 +33,7 @@ void ts_imprimir_arquivo(const char *nome_base);
 int ts_contar_variaveis_nivel_atual();
 void ts_erro(const char *msg);
 
-// Função auxiliar para converter tipo → string (para .ts)
+// Função auxiliar para converter tipoSimbolo para string  string
 const char* tipo_para_string(TipoSimbolo t);
 const char* cat_para_string(Categoria c);
 
